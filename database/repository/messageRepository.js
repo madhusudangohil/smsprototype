@@ -39,6 +39,7 @@ function createOutboundMessage(message, sessionId){
     });
 }
 
+
 module.exports = {
     createMessage : createMessage,
     updateMessage: updateMessage,

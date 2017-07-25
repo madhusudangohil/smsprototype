@@ -55,7 +55,7 @@ function postContentToLex(inboundMessage, callback) {
             }
             messageRepo.createOutboundMessage(message, inboundMessage.sessionId).then(r=>{
                 initSns();
-                let botResponse = {message: message, sessonId: inboundMessage.sessionId, outboundMessageId: r.id};
+                let botResponse = {message: message, sessonId: inboundMessage.sessionId, to: inboundMessage.from, outboundMessageId: r.id};
                 publishToSns(botResponse, callback);
             })
             
