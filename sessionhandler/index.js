@@ -24,22 +24,19 @@ function handleMessage(event, context, callback) {
             if (s) {
                 console.log('messageID ${message.messageId} and session id ${s.id}');
                 sessionAssignedMessage.sessionId = s.id;
-                messageRepo.updateMessage(message.messageId, s.id).then(ms => {
-                    console.log('message udpated');
-                    publishToSns(sessionAssignedMessage, callback);
-                })
+                return messageRepo.updateMessage(message.messageId, s.id)
             } else {
                 sessionRepo.createSession(phoneNumber).then(s => {
                         sessionAssignedMessage.sessionId = s.id;
-                        messageRepo.updateMessage(message.messageId, s.id).then(ms => {
-                            console.log('message udpated');
-                            publishToSns(sessionAssignedMessage, callback);
-                        })
+                        return messageRepo.updateMessage(message.messageId, s.id);
                     }
 
                 )
             }
-        });
+        }).then(ms => {
+                    console.log('message udpated');
+                    publishToSns(sessionAssignedMessage, callback);
+                });
 
 }
 

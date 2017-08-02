@@ -1,10 +1,6 @@
 {
   "development": {
-    "username": "madhu",
-    "password": "nickelpen2",
-    "database": "sms",
-    "host": "channel.cliaj813vwy8.us-west-2.rds.amazonaws.com",
-    "dialect": "mysql"
+    "use_env_variable": "DATABASE_URL"
   },
   "test": {
     "username": "root",

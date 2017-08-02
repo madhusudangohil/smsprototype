@@ -6,7 +6,16 @@ const lexruntime = new AWS.LexRuntime({
 });
 
 const params = require('./params.js');
+const audioLoader = require('audio-loader');
+const request = require('request');
+
 params.sessionAttributes = {};
+
+ var requestSettings = {
+    method: 'GET',    
+    encoding:null
+};
+
 
 function handleMessage(event, context, callback) {
     if (context)
@@ -28,11 +37,25 @@ function populateParamFromMessage(message, callback) {
     messageRepo.getMessage(message.messageId).then(r => {
             let m = JSON.parse(r.message);
             console.log(m.message);
-            let body = decodeURIComponent((m.message.Body + '').replace(/\+/g, '%20'));
-            console.log('body -' + body);
-            params.inputStream = body;
-            params.userId = decodeURIComponent(message.from).replace('+', '');
-            postContentToLex(message, callback);
+            params.userId = decodeURIComponent(message.from).replace('+', '');            
+            if(m.message.MediaContentType0 != undefined){
+                params.contentType = "audio/x-cbr-opus-with-preamble; preamble-size=0; bit-rate=256000; frame-size-milliseconds=4";
+                params.accept = "audio/ogg"
+                let mediaUrl = decodeURIComponent(m.message.MediaUrl0);
+                console.log(mediaUrl);
+                requestSettings.url = mediaUrl;
+                request(requestSettings, function(error, response, body) {
+                        params.inputStream = body;
+                        console.log(body);
+                        postContentToLex(message, callback);
+                });
+            }
+            else{
+                let body = decodeURIComponent((m.message.Body + '').replace(/\+/g, '%20'));
+                console.log('body -' + body);
+                params.inputStream = body;
+                postContentToLex(message, callback);
+            }
         }
 
     )
@@ -40,6 +63,7 @@ function populateParamFromMessage(message, callback) {
 }
 
 function postContentToLex(inboundMessage, callback) {
+    console.log(params);
     lexruntime.postContent(params, function (err, data) {
         if (err) {
             console.log(err, err.stack);

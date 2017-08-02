@@ -1,4 +1,5 @@
 let index = require('./index.js');
+const audioLoader = require('audio-loader');
 let event = 
 {
   "Records": [
@@ -28,6 +29,21 @@ let event =
 }
 
 
-index.handler(event, null, function(err, data){
-    console.log(data);
-})
+// index.handler(event, null, function(err, data){
+//     console.log(data);
+// })
+
+
+var fs = require('fs'),
+request = require('request');
+
+ var requestSettings = {
+    method: 'GET',
+    url: 'https://api.twilio.com/2010-04-01/Accounts/AC119ac6bc1668aaaaa2941d0a72a1b4b1/Messages/MM85bdca3d308b66afae91a189500e0267/Media/ME5b468859369a6dbf1b6fb3c2254580d9',
+    encoding:null
+};
+
+
+request(requestSettings, function(error, response, body) {
+    console.log(body);
+});
