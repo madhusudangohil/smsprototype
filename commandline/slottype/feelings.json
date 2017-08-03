@@ -1,0 +1,18 @@
+{
+  "enumerationValues": [
+    {
+      "value": "great"
+    },
+    {
+      "value": "good"
+    },
+    {
+      "value": "awesome"
+    },
+    {
+      "value": "okay"
+    }
+  ],
+  "name": "user_feelings",
+  "description": "what user could be feeling"
+}

@@ -1,0 +1,55 @@
+#aws lex-models put-slot-type --name FlowerTypes --cli-input-json file://bot/FlowerTypes.json
+#output of command
+{
+    "enumerationValues": [
+        {
+            "value": "tulips"
+        },
+        {
+            "value": "lilies"
+        },
+        {
+            "value": "roses"
+        }
+    ],
+    "name": "FlowerTypes",
+    "checksum": "6e6fdf36-eb33-49c3-a97d-65857db4bc2e",
+    "version": "$LATEST",
+    "lastUpdatedDate": 1501164177.708,
+    "createdDate": 1501164177.708,
+    "description": "Types of flowers to pick up"
+}
+
+#aws lex-models put-intent --name OrderFlowers --cli-input-json file://bot/OrderFlowers.json
+("checksum": "137f8b97-6362-4a99-8e70-3c742c6993b2")
+
+aws lambda create-function --function-name   FlowerBotProcessor  --zip-file fileb://../flowerbotprocessor/index.zip --role arn:aws:iam::459375513878:role/mobile-plan-bot-role --handler index.handler --runtime nodejs6.10 --region us-east-1
+
+#aws lex-models put-bot --name BotAgent --cli-input-json file://OrderFlowersBot.json
+
+---- upto here bot returns parameter to client, 
+now modify OrderFlowers.json, add checksum from above.
+aws lex-models put-intent --name OrderFlowers --cli-input-json file://bot/OrderFlowersV2.json
+
+
+#aws lex-models put-intent --name OrderFlowers --cli-input-json file://slottype/OrderFlowersV2.json
+#aws lex-models get-intents 
+aws lex-models get-intent-versions --name "OrderFlowers"
+aws lex-models get-intent --name "OrderCoffee" --intent-version $LATEST (this works in command line not in powershell)
+
+aws lex-models get-intent --name OrderFlowers --intent-version "$LATEST" > OrderFlowers-V3.json
+
+aws lambda get-function --function-name "FlowerBotProcessor"
+
+aws lambda add-permission --function-name FlowerBotProcessor --statement-id 4 --action lambda:InvokeFunction --principal lex.amazonaws.com --source-arn "arn:aws:lex:us-east-1:459375513878:intent:OrderFlowers:*"
+
+
+
+
+
+ aws lex-models delete-bot --name BotAgent
+ aws lex-models delete-intent --name OrderFlowers
+ aws lex-models delete-slot-type  --name FlowerTypes
+ aws lambda remove-permission --function-name FlowerBotProcessor --statement-id 4
+ aws lambda delete-function --function-name FlowerBotProcessor
+ 
