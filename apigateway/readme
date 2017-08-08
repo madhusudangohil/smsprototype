@@ -1,0 +1,107 @@
+https://ig.nore.me/2016/03/setting-up-lambda-and-a-gateway-through-the-cli/
+
+
+create-rest-api
+PS D:\Learning\NodeLessions\smsprototype\apigateway> aws apigateway create-rest-api --name helloWorldApi --description 'test cli for api creation' --profile individual
+{
+    "id": "qqzhdjbv3i",
+    "name": "helloWorldApi",
+    "description": "test cli for api creation",
+    "createdDate": 1502122811
+}
+
+PS D:\Learning\NodeLessions\smsprototype\apigateway> aws apigateway get-resources --rest-api-id qqzhdjbv3i --profile individual
+{
+    "items": [
+        {
+            "path": "/",
+            "id": "12b34ac031"
+        }
+    ]
+}
+
+aws apigateway create-resource  --rest-api-id qqzhdjbv3i --parent-id 12b34ac031 --path-part 'hellowWorld'
+PS D:\Learning\NodeLessions\smsprototype\apigateway> aws apigateway create-resource  --rest-api-id qqzhdjbv3i --parent-id 12b34ac031 --path-part 'hellowWorld' --profile individual
+{
+    "path": "/hellowWorld",
+    "pathPart": "hellowWorld",
+    "id": "h49a71",
+    "parentId": "12b34ac031"
+}
+
+PS D:\Learning\NodeLessions\smsprototype\apigateway> aws apigateway put-method --rest-api-id qqzhdjbv3i --resource-id h49a71 --http-method POST --authorization-type NONE --region us-east-1 --profile indi
+vidual
+{
+    "apiKeyRequired": false,
+    "httpMethod": "POST",
+    "authorizationType": "NONE"
+}
+
+
+aws apigateway get-integration --rest-api-id qqzhdjbv3i --resource-id h49a71 --http-method POST --profile individual --region us-west-2
+
+aws apigateway get-rest-apis --profile individual --region us-west-2
+jfh1ge3skf
+
+PS D:\Learning\NodeLessions\smsprototype\apigateway> aws apigateway get-resources --rest-api-id jfh1ge3skf  --profile individual --region us-west-2
+{
+    "items": [
+        {
+            "path": "/message",
+            "resourceMethods": {
+                "POST": {}
+            },
+            "id": "akd8xe",
+            "pathPart": "message",
+            "parentId": "ektdx3muel"
+        },
+        {
+            "path": "/",
+            "id": "ektdx3muel"
+        }
+    ]
+}
+
+PS D:\Learning\NodeLessions\smsprototype\apigateway> aws apigateway put-integration --rest-api-id qqzhdjbv3i --resource-id h49a71 --http-method POST --type AWS --integration-http-method POST --uri arn:aw
+s:apigateway:us-west-2:lambda:path/2015-03-31/functions/arn:aws:lambda:us-west-2:123456789:function:mobileBotRouter/invocations --profile individual
+{
+    "httpMethod": "POST",
+    "passthroughBehavior": "WHEN_NO_MATCH",
+    "cacheKeyParameters": [],
+    "type": "AWS",
+    "uri": "arn:aws:apigateway:us-west-2:lambda:path/2015-03-31/functions/arn:aws:lambda:us-west-2:123456789:function:mobileBotRouter/invocations",
+    "cacheNamespace": "h49a71"
+}
+
+
+PS D:\Learning\NodeLessions\smsprototype\apigateway> aws apigateway put-integration --rest-api-id qqzhdjbv3i --resource-id h49a71 --http-method POST --type AWS --integration-http-method POST --uri arn:aw
+s:apigateway:us-west-2:lambda:path/2015-03-31/functions/arn:aws:lambda:us-west-2:123456789:function:mobileBotRouter/invocations --request-templates '{\"application/x-www-form-urlencoded\":\"{"body":$input.json("$")}\"}' --profile individual
+{
+    "passthroughBehavior": "WHEN_NO_MATCH",
+    "cacheKeyParameters": [],
+    "uri": "arn:aws:apigateway:us-west-2:lambda:path/2015-03-31/functions/arn:aws:lambda:us-west-2:123456789:function:mobileBotRouter/invocations",
+    "httpMethod": "POST",
+    "requestTemplates": {
+        "application/x-www-form-urlencoded": "{body:$input.json($)}"
+    },
+    "cacheNamespace": "h49a71",
+    "type": "AWS"
+}
+
+
+aws apigateway put-integration --rest-api-id qqzhdjbv3i --resource-id h49a71 --http-method POST --type AWS --integration-http-method POST --uri arn:aws:apigateway:us-west-2:lambda:path/2015-03-31/functions/arn:aws:lambda:us-west-2:123456789:function:mobileBotRouter/invocations `
+ --request-templates '{\"application/x-www-form-urlencoded\":\"#set($httpPost=$input.path("$").split("&")){}\"}' --profile individual
+
+ aws apigateway put-integration --rest-api-id qqzhdjbv3i --resource-id h49a71 --http-method POST --type AWS --integration-http-method POST --uri arn:aws:apigateway:us-west-2:lambda:path/2015-03-31/functions/arn:aws:lambda:us-west-2:123456789:function:mobileBotRouter/invocations `
+ --request-templates '{\"application/x-www-form-urlencoded\":\"#set($httpPost=$input.path(\\\"$\\\").split(\\\"&\\\")){}\"}' --profile individual
+
+ aws apigateway put-integration --rest-api-id qqzhdjbv3i --resource-id h49a71 --http-method POST --type AWS --integration-http-method POST --uri arn:aws:apigateway:us-west-2:lambda:path/2015-03-31/functions/arn:aws:lambda:us-west-2:123456789:function:mobileBotRouter/invocations `
+ --request-templates '{\"application/x-www-form-urlencoded\":\"#set($httpPost=$input.path(\\\"$\\\").split(\\\"&\\\")){\\r\\n \\r\\n}\"}' --profile individual
+
+ 
+--request-templates '{\"application/x-www-form-urlencoded\":\"#set($httpPost=$input.path(\\\"$\\\").split(\\\"&\\\")){  }\"}'
+ "#set($httpPost=$input.path(\\\"$\\\").split(\\\"&\\\")){#foreach($kvPair\u0020in\u0020$httpPost)#set($kvTokenised=$kvPair.split(\\\"=\\\"))#if($kvTokenised.size()>1)\\\"$kvTokenised[0]\\\":\\\"$kvTokenised[1]\\\"#if($foreach.hasNext),#end\u0020#else\u0020\\\"$kvTokenised[0]\\\":\\\"\\\"#if($foreach.hasNext),#end\u0020#end\u0020#end}"
+ --profile individual
+
+aws apigateway put-integration --rest-api-id qqzhdjbv3i --resource-id h49a71 --http-method POST --type AWS --integration-http-method POST --uri arn:aws:apigateway:us-west-2:lambda:path/2015-03-31/functions/arn:aws:lambda:us-west-2:123456789:function:mobileBotRouter/invocations `
+ --request-templates '{\"application/x-www-form-urlencoded\":\""#set($httpPost=$input.path(\\\"$\\\").split(\\\"&\\\")){#foreach($kvPair\u0020in\u0020$httpPost)#set($kvTokenised=$kvPair.split(\\\"=\\\"))#if($kvTokenised.size()>1)\\\"$kvTokenised[0]\\\":\\\"$kvTokenised[1]\u0020\\\"#if($foreach.hasNext),#end\u0020#else\u0020\\\"$kvTokenised[0]\\\":\\\"\\\"#if($foreach.hasNext),#end\u0020#end\u0020#end}"\"}'

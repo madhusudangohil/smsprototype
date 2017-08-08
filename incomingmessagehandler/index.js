@@ -7,7 +7,8 @@ function handleMessage(event, context, callback){
         context.callbackWaitsForEmptyEventLoop = false;
     messageRepo.createMessage({       
         message: event})
-        .then(m=>{            
+        .then(m=>{
+            initSns();
             return publishToSns({messageId: m.id, from: event.From}, callback);            
         })
         .then(s=>console.log(s))
@@ -34,7 +35,4 @@ function publishToSns(message, callback){
     }).promise();
 }
 
-module.exports = {
-    handler: handleMessage,
-    initSns: initSns
-}
+exports.handler = handleMessage;

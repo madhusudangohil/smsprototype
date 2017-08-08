@@ -28,6 +28,8 @@ aws lambda create-function --function-name   FlowerBotProcessor  --zip-file file
 #aws lex-models put-bot --name BotAgent --cli-input-json file://OrderFlowersBot.json
 
 ---- upto here bot returns parameter to client, 
+aws lambda add-permission --function-name FlowerBotProcessor --statement-id 1 --action lambda:InvokeFunction --principal lex.amazonaws.com --source-arn "arn:aws:lex:us-east-1:459375513878:intent:OrderFlowers:*"
+
 now modify OrderFlowers.json, add checksum from above.
 aws lex-models put-intent --name OrderFlowers --cli-input-json file://bot/OrderFlowersV2.json
 
